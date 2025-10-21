@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Alivios</title>
+    <!-- Incluir Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Incluir Plotly.js para graficar -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        /* -------------------- Estilos básicos del body -------------------- */
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0; padding: 0;
+            height: 100vh; width: 100vw;
+            font-family: 'Arial', sans-serif;
+            background: #f8f9fa;
+            overflow: hidden;
+        }
+
+        /* -------------------- Estilos del header (copiados y adaptados del ejemplo) -------------------- */
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 10px);
+            width: calc(100vw - 10px);
+            margin: 5px;
+            background: #ffffff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .header {
+            height: 55px;
+            background: #28282B;
+            width: 100%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            z-index: 100;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+        .header h1 {
+            margin: 0;
+            color: white;
+            font-size: 1.4rem;
+            font-weight: 200;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .header i {
+            font-size: 2.1rem;
+            color: #6c8ebf;
+            margin-top: 1px;  /* Subir el ícono para que esté más arriba */
+        }
+        .header #header-localidad {
+            font-size: 1.2rem;
+            color: white;
+            font-weight: 400;
+            margin-left: 10px;
+        }
+
+        /* -------------------- Estilos del contenido principal -------------------- */
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .form-section {
+            margin-bottom: 20px;
+        }
+        .form-section form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-section label {
+            font-weight: bold;
+        }
+        .form-section select {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-section button {
+            padding: 5px 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .form-section button:hover {
+            background: #0056b3;
+        }
+        .form-section button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .graph-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #grafico {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* -------------------- NUEVOS ESTILOS PARA LOCALIDADES (adaptados del ejemplo) -------------------- */
+        .localidad-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .localidad-group label {
+            font-weight: 600;
+            color: #555;
+            font-size: 0.95rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .localidad-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1.8px solid #868e96;
+            border-radius: 7px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-top: 5px;
+        }
+        .localidad-dropdown ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .localidad-dropdown li {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: #000;
+            transition: background-color 0.3s ease;
+        }
+        .localidad-dropdown li:hover {
+            background: #f8f9fa;
+        }
+        .localidad-dropdown li.selected {
+            background: #e9ecef;
+            font-weight: 600;
+        }
+        .localidad-icon-box {
+            background: #f8f9fa;
+            border: 1px solid #868e96;
+            border-radius: 8px;
+            padding: 6px 10px;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 42px;
+            height: 42px;
+            justify-content: center;
+        }
+        .localidad-icon-box:hover {
+            background-color: #e2e6ea;
+        }
+        .localidad-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 1.3rem;
+            cursor: pointer;
+        }
+        .mensaje-localidad {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 7px;
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: 500;
+            color: #856404;
+            font-size: 1rem;
+        }
+        .alivios-section {
+            display: none;
+        }
+        .alivios-section.visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <a href="/" style="color: inherit; text-decoration: none;"><i class="fas fa-chart-line"></i></a>
+                <span id="header-localidad">{{ selected_nombre or 'Alivios' }}</span>
+            </h1>
+        </div>
+        <div class="content">
+            <!-- Selector de Localidad como botón con icono -->
+            <div class="localidad-group">
+                <label class="localidad-label" onclick="toggleLocalidadDropdown()" aria-label="Seleccionar localidad" title="Seleccionar localidad">
+                    <span class="localidad-icon-box">
+                        <i class="fas fa-map-marker-alt" style="font-size: 1.4rem; color: #555;"></i>
+                    </span>
+                </label>
+
+                <!-- AGREGADO: Dropdown para localidades -->
+                <div class="localidad-dropdown" id="localidad-dropdown">
+                    <ul>
+                        <li onclick="selectLocalidad('', '-- Todas las localidades --', this)" {% if not selected_id_localidad %}class="selected"{% endif %}>
+                            -- Todas las localidades --
+                        </li>
+                        {% for loc in localidades %}
+                            <li onclick="selectLocalidad('{{ loc.id }}', '{{ loc.id }} - {{ loc.nombre }}', this)" {% if selected_id_localidad == loc.id|string %}class="selected"{% endif %}>
+                                {{ loc.id }} - {{ loc.nombre }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Mensaje si no hay localidad seleccionada -->
+            {% if not selected_id_localidad %}
+                <div class="mensaje-localidad">
+                    Selecciona una localidad para ver las opciones de alivios disponibles.
+                </div>
+            {% endif %}
+
+            <!-- Sección de Alivios (siempre renderizada, pero oculta si no hay localidad) -->
+            <div class="alivios-section {% if selected_id_localidad %}visible{% endif %}">
+                <div class="form-section">
+                    <form method="POST">
+                        <!-- AGREGADO: Input hidden para id_localidad DENTRO del formulario -->
+                        <input type="hidden" name="id_localidad" id="id_localidad" value="{{ selected_id_localidad }}">
+                        <label for="periodo">Seleccionar período:</label>
+                        <select name="periodo" id="periodo">
+                            <option value="1mes" {% if selected_periodo == '1mes' %}selected{% endif %}>1 Mes</option>
+                            <option value="3meses" {% if selected_periodo == '3meses' %}selected{% endif %}>3 Meses</option>
+                            <option value="6meses" {% if selected_periodo == '6meses' %}selected{% endif %}>6 Meses</option>
+                            <option value="1ano" {% if selected_periodo == '1ano' %}selected{% endif %}>Último Año</option>
+                        </select>
+                        <button type="submit">Generar Gráfico</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="graph-section">
+                {% if grafico_json %}
+                    <div id="grafico"></div>
+                    <script>
+                        var graficoData = {{ grafico_json|safe }};
+                        Plotly.newPlot('grafico', graficoData.data, graficoData.layout);
+                    </script>
+                {% else %}
+                    <p>No hay datos para el rango/localidad seleccionados</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // AGREGADO: Funciones para el dropdown de localidades (adaptadas del ejemplo)
+        function toggleLocalidadDropdown() {
+            const dropdown = document.getElementById('localidad-dropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function selectLocalidad(id, text, element) {
+            const currentId = document.getElementById('id_localidad').value;
+            const isChange = id !== currentId;
+
+            document.getElementById('id_localidad').value = id;
+
+            // Actualizar el nombre en el header (solo el nombre, sin ID)
+            let nombreHeader = '';
+            if (id && text !== '-- Todas las localidades --') {
+                // Extraer solo el nombre si text incluye 'ID - Nombre'
+                if (text.includes(' - ')) {
+                    nombreHeader = text.split(' - ')[1];
+                } else {
+                    nombreHeader = text;
+                }
+            } else if (!id) {
+                nombreHeader = 'Alivios';
+            }
+            document.getElementById('header-localidad').textContent = nombreHeader;
+            
+            // Marcar la opción seleccionada y ocultar dropdown
+            const dropdown = document.getElementById('localidad-dropdown');
+            const items = dropdown.querySelectorAll('li');
+            items.forEach(item => item.classList.remove('selected'));
+            if (element) {
+                element.classList.add('selected');
+            }
+            
+            dropdown.style.display = 'none';
+
+            if (isChange) {
+                // Resetear todo si hay cambio de localidad
+                // Ocultar sección de alivios
+                const aliviosSection = document.querySelector('.alivios-section');
+                const mensaje = document.querySelector('.mensaje-localidad');
+                if (aliviosSection) {
+                    aliviosSection.classList.remove('visible');
+                }
+                if (mensaje) {
+                    mensaje.style.display = 'block';
+                }
+
+                // Limpiar gráfico si existe
+                const graficoDiv = document.getElementById('grafico');
+                if (graficoDiv) {
+                    graficoDiv.innerHTML = '<p>Selecciona un período y genera el gráfico para ver los datos de alivios.</p>';
+                }
+
+                // Si se selecciona una localidad específica, mostrar sección de alivios
+                if (id) {
+                    if (aliviosSection) {
+                        aliviosSection.classList.add('visible');
+                    }
+                    if (mensaje) {
+                        mensaje.style.display = 'none';
+                    }
+                }
+            }
+        }
+
+        // Cerrar dropdown si se hace clic fuera
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('localidad-dropdown');
+            const label = document.querySelector('.localidad-label');
+            if (!label.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

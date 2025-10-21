@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nilsa Prácticas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" /> <!-- Para los iconos -->
+    <style>
+        /* Estilos actualizados para mayor estética y sin huecos */
+        body {
+            margin: 0; /* Mantenemos margin en 0 para evitar scrollbars, y usamos padding para los márgenes */
+            padding: 5px; /* Agrega 5px de padding en todos los lados para crear márgenes alrededor del contenido */
+            height: calc(100vh - 10px);
+            width: calc(100vw - 10px);
+            display: flex;
+            flex-direction: column;
+            gap: 0; /* Elimina cualquier espacio entre elementos hijos */
+            font-family: 'Roboto', sans-serif;
+            background: #FFFFFF; /* Fondo blanco para un aspecto limpio */
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .header {
+            height: 100px;
+            background: #28282B; /* Negro para el header */
+            width: 100%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3); /* Sombra sutil */
+            z-index: 100;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            margin: 0;
+            border-top-left-radius: 10px; /* Redondeo reducido a 10px */
+            border-top-right-radius: 10px; /* Redondeo reducido a 10px */
+	    margin: 0 10px 0 0;
+        }
+        
+        .header h1 {
+            margin: 0;
+            color: #FFFFFF; /* Texto blanco para contraste */
+            font-size: 1.7rem;
+            font-weight: 200;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header i {
+            font-size: 2.9rem;
+            color: #6c8ebf; /* Ícono en azul verdoso*/
+        }
+        
+        .header #header-localidad {
+            font-size: 2rem;
+            color: #FFFFFF; /* Texto blanco */
+            font-weight: 400;
+            margin-left: 10px;
+        }
+        
+        .option-container {
+            display: flex;
+            width: 100%;
+            flex: 1;
+            margin: 0;
+            padding: 0;
+            animation: containerSlideIn 0.5s ease-in-out;
+            margin-bottom: 0; /* Mantenemos sin margen inferior */
+        }
+        
+        @keyframes containerSlideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .option {
+            width: 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #28282B;
+            font-size: 2.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10); /* Sombra mantenida */
+            overflow: hidden;
+            opacity: 0;
+            animation: optionFadeIn 0.5s ease-in-out forwards;
+            background: #F0F0F0;
+        }
+        
+        .option:first-child {
+            border-radius: 0; /* Sin redondez */
+            border-right: 1px solid #28282B; /* Línea negra en medio */
+            border-left: 1px solid #28282B; /* Borde izquierdo */
+        }
+        
+        .option:last-child {
+            border-radius: 0; /* Sin redondez */
+            border-right: 1px solid #28282B; /* Borde derecho */
+        }
+        
+        @keyframes optionFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(40, 40, 43, 0.05);
+            z-index: 1;
+            border-radius: inherit; /* No aplica ya que no hay redondez */
+        }
+        
+        .option > * {
+            z-index: 2;
+            position: relative;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .option i {
+            font-size: 4rem;
+            margin-bottom: 10px;
+            color: #28282B;
+            opacity: 0.8;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            animation: iconPulse 1.5s infinite ease-in-out;
+        }
+        
+        @keyframes iconPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .option:hover {
+            opacity: 0.95;
+            transform: scale(1.05);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .option:hover i {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        
+        .option p {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            color: #28282B;
+            opacity: 0.7;
+        }
+        
+        .footer-strip {
+            height: 30px; /* Altura de la franja */
+            background-color: #28282B; /* Gris claro */
+            width: 100%; /* Ocupa todo el ancho */
+            flex-shrink: 0; /* Evita que se reduzca */
+            border-bottom: 1px solid #28282B; /* Borde negro en la parte inferior */
+            border-left: 1px solid #28282B; /* Nuevo: Línea negra en el lado izquierdo */
+            border-radius: 0 0 10px 10px; /* Redondez solo en la parte inferior */
+            margin: 0; /* Margen: superior e izquierdo a 0, derecho e inferior a 10px */
+        }
+        
+        @media (max-width: 768px) {
+            .option-container {
+                flex-direction: column;
+                margin: 0;
+            }
+            
+            .option {
+                width: 100%;
+                height: 50%;
+                font-size: 2rem;
+                border-right: none; /* Quitamos borde derecho en mobile */
+            }
+            
+            .option:first-child {
+                border-radius: 0;
+            }
+            
+            .option:last-child {
+                border-radius: 0;
+            }
+            
+            .option i {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-chart-line"></i> <span id="header-localidad"></span></h1>
+    </div>
+    <div class="option-container">
+        <div class="option" onclick="window.location.href='/medidores'">
+            <i class="fas fa-tachometer-alt"></i>
+            Medidores
+            <p>Visualiza los datos de las depuradoras</p>
+        </div>
+        <div class="option" onclick="window.location.href='/alivios'">
+            <i class="fas fa-water"></i>
+            Alivios
+            <p>Conoce los alivios de Navarra según Baseform</p>
+        </div>
+    </div>
+    <div class="footer-strip"></div> <!-- Franja gris con línea negra en el lado izquierdo -->
+</body>
+</html>
